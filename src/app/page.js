@@ -10,7 +10,8 @@ const mealData = [
       breakfast: { time: '10:30 AM', food: 'Papaya' },
       lunch: { time: '2:00 PM', food: 'Banana (2)' },
       dinner: { time: '8:00 PM', food: 'Papaya' }
-    }
+    },
+    customEntries: []
   },
   {
     date: '2026-02-06',
@@ -361,28 +362,168 @@ function MealCard({ dayData, showAsToday }) {
       </div>
       
       <div className="space-y-4">
-        <div className="flex items-start">
-          <div className="w-24 text-sm font-medium text-gray-600 dark:text-gray-400">Breakfast</div>
-          <div className="flex-1">
-            <div className="text-xs text-gray-400 dark:text-gray-500 mb-1">{dayData.meals.breakfast.time}</div>
-            <div className="text-base font-medium text-gray-900 dark:text-gray-100">{dayData.meals.breakfast.food}</div>
+        {dayData.meals.breakfast.food && (
+          <div className="flex items-start">
+            <div className="w-24 text-sm font-medium text-gray-600 dark:text-gray-400">Breakfast</div>
+            <div className="flex-1">
+              <div className="text-xs text-gray-400 dark:text-gray-500 mb-1">{dayData.meals.breakfast.time}</div>
+              <div className="text-base font-medium text-gray-900 dark:text-gray-100">{dayData.meals.breakfast.food}</div>
+            </div>
           </div>
-        </div>
+        )}
         
-        <div className="flex items-start">
-          <div className="w-24 text-sm font-medium text-gray-600 dark:text-gray-400">Lunch</div>
-          <div className="flex-1">
-            <div className="text-xs text-gray-400 dark:text-gray-500 mb-1">{dayData.meals.lunch.time}</div>
-            <div className="text-base font-medium text-gray-900 dark:text-gray-100">{dayData.meals.lunch.food}</div>
+        {dayData.meals.lunch.food && (
+          <div className="flex items-start">
+            <div className="w-24 text-sm font-medium text-gray-600 dark:text-gray-400">Lunch</div>
+            <div className="flex-1">
+              <div className="text-xs text-gray-400 dark:text-gray-500 mb-1">{dayData.meals.lunch.time}</div>
+              <div className="text-base font-medium text-gray-900 dark:text-gray-100">{dayData.meals.lunch.food}</div>
+            </div>
           </div>
-        </div>
+        )}
         
-        <div className="flex items-start">
-          <div className="w-24 text-sm font-medium text-gray-600 dark:text-gray-400">Dinner</div>
-          <div className="flex-1">
-            <div className="text-xs text-gray-400 dark:text-gray-500 mb-1">{dayData.meals.dinner.time}</div>
-            <div className="text-base font-medium text-gray-900 dark:text-gray-100">{dayData.meals.dinner.food}</div>
+        {dayData.meals.dinner.food && (
+          <div className="flex items-start">
+            <div className="w-24 text-sm font-medium text-gray-600 dark:text-gray-400">Dinner</div>
+            <div className="flex-1">
+              <div className="text-xs text-gray-400 dark:text-gray-500 mb-1">{dayData.meals.dinner.time}</div>
+              <div className="text-base font-medium text-gray-900 dark:text-gray-100">{dayData.meals.dinner.food}</div>
+            </div>
           </div>
+        )}
+        
+        {dayData.customEntries && dayData.customEntries.length > 0 && (
+          <div className="flex items-start pt-2 border-t border-gray-200 dark:border-gray-700">
+            <div className="w-24 text-sm font-medium text-gray-600 dark:text-gray-400">Other</div>
+            <div className="flex-1">
+              <div className="text-base text-gray-900 dark:text-gray-100">
+                {dayData.customEntries.join(', ')}
+              </div>
+            </div>
+          </div>
+        )}
+        
+        {!dayData.meals.breakfast.food && !dayData.meals.lunch.food && !dayData.meals.dinner.food && (!dayData.customEntries || dayData.customEntries.length === 0) && (
+          <div className="text-sm text-gray-400 dark:text-gray-500 italic">No meals recorded</div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// Add Meal Modal Component
+function AddMealModal({ isOpen, onClose, onAddCustomEntry }) {
+  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedTime, setSelectedTime] = useState('');
+  const [foodDescription, setFoodDescription] = useState('');
+  
+  useEffect(() => {
+    if (isOpen) {
+      // Set default date to today
+      const today = new Date();
+      const dateStr = today.toISOString().split('T')[0];
+      setSelectedDate(dateStr);
+      
+      // Set default time to current time
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      setSelectedTime(`${hours}:${minutes}`);
+    }
+  }, [isOpen]);
+  
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!selectedDate || !selectedTime || !foodDescription) return;
+    
+    // Convert 24h time to 12h format
+    const [hours, minutes] = selectedTime.split(':');
+    const hour = parseInt(hours);
+    const ampm = hour >= 12 ? 'PM' : 'AM';
+    const displayHour = hour % 12 || 12;
+    const formattedTime = `${displayHour}:${minutes} ${ampm}`;
+    
+    onAddCustomEntry(selectedDate, formattedTime, foodDescription);
+    
+    // Reset form
+    setFoodDescription('');
+    onClose();
+  };
+  
+  if (!isOpen) return null;
+  
+  return (
+    <div className="fixed inset-0 z-50 overflow-y-auto">
+      <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70" onClick={onClose}></div>
+      <div className="relative min-h-screen flex items-center justify-center p-4">
+        <div className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md transition-colors">
+          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Add Meal</h2>
+            <button
+              onClick={onClose}
+              className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 text-3xl font-light leading-none"
+            >
+              ×
+            </button>
+          </div>
+          
+          <form onSubmit={handleSubmit} className="p-6 space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Date
+              </label>
+              <input
+                type="date"
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                required
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Time
+              </label>
+              <input
+                type="time"
+                value={selectedTime}
+                onChange={(e) => setSelectedTime(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                required
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                What did you eat?
+              </label>
+              <textarea
+                value={foodDescription}
+                onChange={(e) => setFoodDescription(e.target.value)}
+                placeholder="e.g., Papaya, Banana (2), Oatmeal with fruits, etc."
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
+                rows="3"
+                required
+              />
+            </div>
+            
+            <div className="flex gap-3 pt-4">
+              <button
+                type="button"
+                onClick={onClose}
+                className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="flex-1 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors font-medium"
+              >
+                Add Meal
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
@@ -390,7 +531,7 @@ function MealCard({ dayData, showAsToday }) {
 }
 
 // Modal Component with optimized rendering
-function Modal({ isOpen, onClose }) {
+function Modal({ isOpen, onClose, meals }) {
   const [visibleCount, setVisibleCount] = useState(10);
   
   // Reset visible count when modal closes
@@ -402,11 +543,12 @@ function Modal({ isOpen, onClose }) {
   
   if (!isOpen) return null;
   
-  const visibleMeals = mealData.slice(0, visibleCount);
-  const hasMore = visibleCount < mealData.length;
+  const sortedMeals = [...meals].sort((a, b) => new Date(a.date) - new Date(b.date));
+  const visibleMeals = sortedMeals.slice(0, visibleCount);
+  const hasMore = visibleCount < sortedMeals.length;
   
   const loadMore = () => {
-    setVisibleCount(prev => Math.min(prev + 10, mealData.length));
+    setVisibleCount(prev => Math.min(prev + 10, sortedMeals.length));
   };
   
   return (
@@ -418,7 +560,7 @@ function Modal({ isOpen, onClose }) {
             <div>
               <h2 className="text-xl font-bold text-gray-900 dark:text-white">All Meals</h2>
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                {mealData.length} days • {mealData[0]?.date && formatDate(mealData[0].date).fullDate} - {mealData[mealData.length - 1]?.date && formatDate(mealData[mealData.length - 1].date).fullDate}
+                {sortedMeals.length} days • {sortedMeals[0]?.date && formatDate(sortedMeals[0].date).fullDate} - {sortedMeals[sortedMeals.length - 1]?.date && formatDate(sortedMeals[sortedMeals.length - 1].date).fullDate}
               </p>
             </div>
             <button
@@ -438,13 +580,13 @@ function Modal({ isOpen, onClose }) {
                 onClick={loadMore}
                 className="w-full py-3 px-4 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium rounded-xl border border-gray-200 dark:border-gray-700 transition-colors shadow-sm"
               >
-                Load More ({mealData.length - visibleCount} more days)
+                Load More ({sortedMeals.length - visibleCount} more days)
               </button>
             )}
             
-            {!hasMore && mealData.length > 10 && (
+            {!hasMore && sortedMeals.length > 10 && (
               <div className="text-center py-4 text-sm text-gray-500 dark:text-gray-400">
-                All {mealData.length} days loaded
+                All {sortedMeals.length} days loaded
               </div>
             )}
           </div>
@@ -457,6 +599,8 @@ function Modal({ isOpen, onClose }) {
 export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isAddMealOpen, setIsAddMealOpen] = useState(false);
+  const [meals, setMeals] = useState(mealData);
   
   // Load theme from localStorage on mount
   useEffect(() => {
@@ -488,11 +632,44 @@ export default function Home() {
   const today = new Date();
   const todayStr = today.toISOString().split('T')[0];
   
+  // Sort meals by date
+  const sortedMeals = [...meals].sort((a, b) => new Date(a.date) - new Date(b.date));
+  
   // Find meals starting from today - limit to 7 cards for optimization
-  const upcomingMeals = mealData.filter(meal => meal.date >= todayStr).slice(0, 7);
+  const upcomingMeals = sortedMeals.filter(meal => meal.date >= todayStr).slice(0, 7);
   
   // If no upcoming meals (date is past the data range), show the last 7 days
-  const displayMeals = upcomingMeals.length > 0 ? upcomingMeals : mealData.slice(-7);
+  const displayMeals = upcomingMeals.length > 0 ? upcomingMeals : sortedMeals.slice(-7);
+  
+  // Function to add a custom meal entry
+  const addCustomEntry = (date, time, food) => {
+    // Find if date already exists
+    const existingMealIndex = meals.findIndex(m => m.date === date);
+    
+    const newEntry = `${time} – ${food}`;
+    
+    if (existingMealIndex !== -1) {
+      // Add to existing date
+      const updatedMeals = [...meals];
+      if (!updatedMeals[existingMealIndex].customEntries) {
+        updatedMeals[existingMealIndex].customEntries = [];
+      }
+      updatedMeals[existingMealIndex].customEntries.push(newEntry);
+      setMeals(updatedMeals);
+    } else {
+      // Create new date with only custom entry
+      const newMeal = {
+        date,
+        meals: {
+          breakfast: { time: '', food: '' },
+          lunch: { time: '', food: '' },
+          dinner: { time: '', food: '' }
+        },
+        customEntries: [newEntry]
+      };
+      setMeals([...meals, newMeal]);
+    }
+  };
   
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
@@ -525,7 +702,7 @@ export default function Home() {
             >
               <span className="text-lg">🍽️</span>
               <span className="text-sm hidden sm:inline">All Meals</span>
-              <span className="text-xs bg-green-600 px-2 py-0.5 rounded-full">{mealData.length}</span>
+              <span className="text-xs bg-green-600 px-2 py-0.5 rounded-full">{meals.length}</span>
             </button>
           </div>
         </div>
@@ -544,8 +721,24 @@ export default function Home() {
         )}
       </main>
       
-      {/* Modal */}
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      {/* Floating Action Button */}
+      <button
+        onClick={() => setIsAddMealOpen(true)}
+        className="fixed bottom-6 right-6 w-14 h-14 bg-green-500 hover:bg-green-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all flex items-center justify-center z-30 group"
+        aria-label="Add meal"
+      >
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+        </svg>
+      </button>
+      
+      {/* Modals */}
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} meals={meals} />
+      <AddMealModal 
+        isOpen={isAddMealOpen} 
+        onClose={() => setIsAddMealOpen(false)}
+        onAddCustomEntry={addCustomEntry}
+      />
     </div>
   );
 }
