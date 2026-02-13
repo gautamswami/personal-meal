@@ -341,21 +341,34 @@ const isToday = (dateStr) => {
 };
 
 // MealCard Component
-function MealCard({ dayData, showAsToday }) {
+function MealCard({ dayData, showAsToday, onAddMeal }) {
   const formattedDate = formatDate(dayData.date);
   const isTodayDate = isToday(dayData.date);
   
   return (
     <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-5 mb-4 transition-colors">
       <div className="mb-4">
-        <div className="flex items-center gap-2">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-            {formattedDate.fullDate}
-          </h2>
-          {isTodayDate && (
-            <span className="bg-green-500 text-white text-xs font-semibold px-2 py-1 rounded-full">
-              Today
-            </span>
+        <div className="flex items-center gap-2 justify-between">
+          <div className="flex items-center gap-2">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+              {formattedDate.fullDate}
+            </h2>
+            {isTodayDate && (
+              <span className="bg-green-500 text-white text-xs font-semibold px-2 py-1 rounded-full">
+                Today
+              </span>
+            )}
+          </div>
+          {onAddMeal && (
+            <button
+              onClick={() => onAddMeal(dayData.date)}
+              className="w-8 h-8 bg-green-500 hover:bg-green-600 text-white rounded-full flex items-center justify-center transition-colors shadow-sm"
+              aria-label="Add meal to this date"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+            </button>
           )}
         </div>
         <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{formattedDate.day}</p>
@@ -412,16 +425,15 @@ function MealCard({ dayData, showAsToday }) {
 }
 
 // Add Meal Modal Component
-function AddMealModal({ isOpen, onClose, onAddCustomEntry }) {
+function AddMealModal({ isOpen, onClose, onAddCustomEntry, preSelectedDate }) {
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
   const [foodDescription, setFoodDescription] = useState('');
   
   useEffect(() => {
     if (isOpen) {
-      // Set default date to today
-      const today = new Date();
-      const dateStr = today.toISOString().split('T')[0];
+      // Set default date - use preSelectedDate if provided, otherwise today
+      const dateStr = preSelectedDate || new Date().toISOString().split('T')[0];
       setSelectedDate(dateStr);
       
       // Set default time to current time
@@ -430,7 +442,7 @@ function AddMealModal({ isOpen, onClose, onAddCustomEntry }) {
       const minutes = String(now.getMinutes()).padStart(2, '0');
       setSelectedTime(`${hours}:${minutes}`);
     }
-  }, [isOpen]);
+  }, [isOpen, preSelectedDate]);
   
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -531,7 +543,7 @@ function AddMealModal({ isOpen, onClose, onAddCustomEntry }) {
 }
 
 // Modal Component with optimized rendering
-function Modal({ isOpen, onClose, meals }) {
+function Modal({ isOpen, onClose, meals, onAddMealForDate }) {
   const [visibleCount, setVisibleCount] = useState(10);
   
   // Reset visible count when modal closes
@@ -572,7 +584,7 @@ function Modal({ isOpen, onClose, meals }) {
           </div>
           <div className="p-6">
             {visibleMeals.map((dayData, index) => (
-              <MealCard key={dayData.date} dayData={dayData} />
+              <MealCard key={dayData.date} dayData={dayData} onAddMeal={onAddMealForDate} />
             ))}
             
             {hasMore && (
@@ -600,9 +612,10 @@ export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isAddMealOpen, setIsAddMealOpen] = useState(false);
+  const [preSelectedDate, setPreSelectedDate] = useState(null);
   const [meals, setMeals] = useState(mealData);
   
-  // Load theme from localStorage on mount
+  // Load theme and meals from localStorage on mount
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'dark') {
@@ -610,6 +623,17 @@ export default function Home() {
     } else {
       // Default to light mode
       setIsDarkMode(false);
+    }
+    
+    // Load saved meals from localStorage
+    const savedMeals = localStorage.getItem('meals');
+    if (savedMeals) {
+      try {
+        const parsedMeals = JSON.parse(savedMeals);
+        setMeals(parsedMeals);
+      } catch (error) {
+        console.error('Error loading saved meals:', error);
+      }
     }
   }, []);
   
@@ -623,6 +647,11 @@ export default function Home() {
       localStorage.setItem('theme', 'light');
     }
   }, [isDarkMode]);
+  
+  // Save meals to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('meals', JSON.stringify(meals));
+  }, [meals]);
   
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode);
@@ -669,6 +698,18 @@ export default function Home() {
       };
       setMeals([...meals, newMeal]);
     }
+  };
+  
+  // Function to handle adding meal from a specific date
+  const handleAddMealForDate = (date) => {
+    setPreSelectedDate(date);
+    setIsAddMealOpen(true);
+  };
+  
+  // Function to close add meal modal and reset pre-selected date
+  const handleCloseAddMeal = () => {
+    setIsAddMealOpen(false);
+    setPreSelectedDate(null);
   };
   
   return (
@@ -733,11 +774,17 @@ export default function Home() {
       </button>
       
       {/* Modals */}
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} meals={meals} />
+      <Modal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        meals={meals}
+        onAddMealForDate={handleAddMealForDate}
+      />
       <AddMealModal 
         isOpen={isAddMealOpen} 
-        onClose={() => setIsAddMealOpen(false)}
+        onClose={handleCloseAddMeal}
         onAddCustomEntry={addCustomEntry}
+        preSelectedDate={preSelectedDate}
       />
     </div>
   );
