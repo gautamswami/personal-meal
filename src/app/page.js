@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 // Meal data from Feb 5 to March 15, 2026
 const mealData = [
@@ -614,6 +614,136 @@ export default function Home() {
   const [isAddMealOpen, setIsAddMealOpen] = useState(false);
   const [preSelectedDate, setPreSelectedDate] = useState(null);
   const [meals, setMeals] = useState(mealData);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authMode, setAuthMode] = useState('login');
+  const [username, setUsername] = useState('');
+  const [authError, setAuthError] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+  
+  // Check authentication on mount
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const savedUsername = localStorage.getItem('username');
+    
+    if (token && savedUsername) {
+      setIsAuthenticated(true);
+      setUsername(savedUsername);
+      loadMealsFromDB(token);
+    } else {
+      setIsLoading(false);
+      setShowAuthModal(true);
+    }
+  }, []);
+  
+  // Load meals from database
+  const loadMealsFromDB = async (token) => {
+    try {
+      const response = await fetch('/api/meals', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data.meals && data.meals.length > 0) {
+          setMeals(data.meals);
+        } else {
+          const localMeals = localStorage.getItem('meals');
+          if (localMeals) {
+            const parsedMeals = JSON.parse(localMeals);
+            setMeals(parsedMeals);
+            saveMealsToDB(parsedMeals, token);
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Failed to load meals from DB:', error);
+      const localMeals = localStorage.getItem('meals');
+      if (localMeals) {
+        setMeals(JSON.parse(localMeals));
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  // Save meals to database
+  const saveMealsToDB = useCallback(async (mealsData, token) => {
+    const authToken = token || localStorage.getItem('token');
+    if (!authToken) return;
+    
+    try {
+      await fetch('/api/meals', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`,
+        },
+        body: JSON.stringify({ meals: mealsData }),
+      });
+    } catch (error) {
+      console.error('Failed to save meals to DB:', error);
+    }
+  }, []);
+  
+  // Handle authentication
+  const handleAuth = async (e) => {
+    e.preventDefault();
+    setAuthError('');
+    
+    if (!username.trim()) {
+      setAuthError('Username is required');
+      return;
+    }
+    
+    try {
+      const endpoint = authMode === 'login' ? '/api/auth/login' : '/api/auth/signup';
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username: username.trim() }),
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('username', data.username);
+        setIsAuthenticated(true);
+        setUsername(data.username);
+        setShowAuthModal(false);
+        
+        if (authMode === 'signup') {
+          const localMeals = localStorage.getItem('meals');
+          if (localMeals) {
+            const parsedMeals = JSON.parse(localMeals);
+            setMeals(parsedMeals);
+            saveMealsToDB(parsedMeals, data.token);
+          }
+        } else {
+          loadMealsFromDB(data.token);
+        }
+      } else {
+        setAuthError(data.error || 'Authentication failed');
+      }
+    } catch (error) {
+      console.error('Auth error:', error);
+      setAuthError('Failed to authenticate. Please try again.');
+    }
+  };
+  
+  // Logout function
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('username');
+    setIsAuthenticated(false);
+    setUsername('');
+    setShowAuthModal(true);
+  };
   
   // Load theme and meals from localStorage on mount
   useEffect(() => {
@@ -621,19 +751,7 @@ export default function Home() {
     if (savedTheme === 'dark') {
       setIsDarkMode(true);
     } else {
-      // Default to light mode
       setIsDarkMode(false);
-    }
-    
-    // Load saved meals from localStorage
-    const savedMeals = localStorage.getItem('meals');
-    if (savedMeals) {
-      try {
-        const parsedMeals = JSON.parse(savedMeals);
-        setMeals(parsedMeals);
-      } catch (error) {
-        console.error('Error loading saved meals:', error);
-      }
     }
   }, []);
   
@@ -648,10 +766,13 @@ export default function Home() {
     }
   }, [isDarkMode]);
   
-  // Save meals to localStorage whenever they change
+  // Save meals to localStorage and DB whenever they change
   useEffect(() => {
-    localStorage.setItem('meals', JSON.stringify(meals));
-  }, [meals]);
+    if (isAuthenticated && meals.length > 0) {
+      localStorage.setItem('meals', JSON.stringify(meals));
+      saveMealsToDB(meals);
+    }
+  }, [meals, isAuthenticated, saveMealsToDB]);
   
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode);
@@ -712,12 +833,85 @@ export default function Home() {
     setPreSelectedDate(null);
   };
   
+  // If loading or not authenticated, show auth screen
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <div className="text-xl text-gray-600 dark:text-gray-400">Loading...</div>
+      </div>
+    );
+  }
+  
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
+      {/* Authentication Modal */}
+      {showAuthModal && (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-gray-50 dark:bg-gray-900">
+          <div className="min-h-screen flex items-center justify-center p-4">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md p-8 transition-colors">
+              <div className="text-center mb-8">
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">🍎 Meal Plan</h1>
+                <p className="text-gray-600 dark:text-gray-400">
+                  {authMode === 'login' ? 'Welcome back!' : 'Create your account'}
+                </p>
+              </div>
+              
+              <form onSubmit={handleAuth} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Username
+                  </label>
+                  <input
+                    type="text"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    placeholder="Enter your username"
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    required
+                  />
+                </div>
+                
+                {authError && (
+                  <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 px-4 py-3 rounded-lg text-sm">
+                    {authError}
+                  </div>
+                )}
+                
+                <button
+                  type="submit"
+                  className="w-full px-4 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors font-medium"
+                >
+                  {authMode === 'login' ? 'Login' : 'Sign Up'}
+                </button>
+              </form>
+              
+              <div className="mt-6 text-center">
+                <button
+                  onClick={() => {
+                    setAuthMode(authMode === 'login' ? 'signup' : 'login');
+                    setAuthError('');
+                  }}
+                  className="text-green-500 hover:text-green-600 text-sm font-medium"
+                >
+                  {authMode === 'login' 
+                    ? "Don't have an account? Sign up" 
+                    : 'Already have an account? Login'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
       {/* Header */}
       <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-40 shadow-sm transition-colors">
         <div className="max-w-2xl mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-xl font-bold text-gray-900 dark:text-white">🍎 Meal Plan</h1>
+          <div className="flex items-center gap-3">
+            <h1 className="text-xl font-bold text-gray-900 dark:text-white">🍎 Meal Plan</h1>
+            {isAuthenticated && (
+              <span className="text-sm text-gray-600 dark:text-gray-400">@{username}</span>
+            )}
+          </div>
           <div className="flex items-center gap-2">
             {/* Dark Mode Toggle */}
             <button
@@ -735,6 +929,20 @@ export default function Home() {
                 </svg>
               )}
             </button>
+            
+            {/* Logout Button */}
+            {isAuthenticated && (
+              <button
+                onClick={handleLogout}
+                className="p-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                aria-label="Logout"
+                title="Logout"
+              >
+                <svg className="w-5 h-5 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+              </button>
+            )}
             
             {/* All Meals Button */}
             <button
