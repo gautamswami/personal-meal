@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 
 // Meal data from Feb 5 to March 15, 2026
 const mealData = [
@@ -375,48 +375,59 @@ function MealCard({ dayData, showAsToday, onAddMeal }) {
       </div>
       
       <div className="space-y-4">
-        {dayData.meals.breakfast.food && (
-          <div className="flex items-start">
-            <div className="w-24 text-sm font-medium text-gray-600 dark:text-gray-400">Breakfast</div>
-            <div className="flex-1">
-              <div className="text-xs text-gray-400 dark:text-gray-500 mb-1">{dayData.meals.breakfast.time}</div>
-              <div className="text-base font-medium text-gray-900 dark:text-gray-100">{dayData.meals.breakfast.food}</div>
-            </div>
-          </div>
-        )}
-        
-        {dayData.meals.lunch.food && (
-          <div className="flex items-start">
-            <div className="w-24 text-sm font-medium text-gray-600 dark:text-gray-400">Lunch</div>
-            <div className="flex-1">
-              <div className="text-xs text-gray-400 dark:text-gray-500 mb-1">{dayData.meals.lunch.time}</div>
-              <div className="text-base font-medium text-gray-900 dark:text-gray-100">{dayData.meals.lunch.food}</div>
-            </div>
-          </div>
-        )}
-        
-        {dayData.meals.dinner.food && (
-          <div className="flex items-start">
-            <div className="w-24 text-sm font-medium text-gray-600 dark:text-gray-400">Dinner</div>
-            <div className="flex-1">
-              <div className="text-xs text-gray-400 dark:text-gray-500 mb-1">{dayData.meals.dinner.time}</div>
-              <div className="text-base font-medium text-gray-900 dark:text-gray-100">{dayData.meals.dinner.food}</div>
-            </div>
-          </div>
-        )}
-        
+        {/* What I Actually Ate — shown first and prominently */}
         {dayData.customEntries && dayData.customEntries.length > 0 && (
-          <div className="flex items-start pt-2 border-t border-gray-200 dark:border-gray-700">
-            <div className="w-24 text-sm font-medium text-gray-600 dark:text-gray-400">Other</div>
-            <div className="flex-1">
-              <div className="text-base text-gray-900 dark:text-gray-100">
-                {dayData.customEntries.join(', ')}
-              </div>
+          <div className="rounded-xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 px-4 py-3">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-xs font-semibold text-green-700 dark:text-green-400 uppercase tracking-wide">What I Ate</span>
+            </div>
+            <div className="space-y-1">
+              {dayData.customEntries.map((entry, i) => (
+                <div key={i} className="text-sm text-gray-800 dark:text-gray-200">{entry}</div>
+              ))}
             </div>
           </div>
         )}
-        
-        {!dayData.meals.breakfast.food && !dayData.meals.lunch.food && !dayData.meals.dinner.food && (!dayData.customEntries || dayData.customEntries.length === 0) && (
+
+        {/* Suggested meals — shown below with a muted label */}
+        {(dayData.meals?.breakfast?.food || dayData.meals?.lunch?.food || dayData.meals?.dinner?.food) && (
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Suggested</span>
+            </div>
+            <div className="space-y-2 opacity-70">
+              {dayData.meals?.breakfast?.food && (
+                <div className="flex items-start">
+                  <div className="w-24 text-sm font-medium text-gray-500 dark:text-gray-500">Breakfast</div>
+                  <div className="flex-1">
+                    <div className="text-xs text-gray-400 dark:text-gray-600 mb-0.5">{dayData.meals.breakfast.time}</div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400">{dayData.meals.breakfast.food}</div>
+                  </div>
+                </div>
+              )}
+              {dayData.meals?.lunch?.food && (
+                <div className="flex items-start">
+                  <div className="w-24 text-sm font-medium text-gray-500 dark:text-gray-500">Lunch</div>
+                  <div className="flex-1">
+                    <div className="text-xs text-gray-400 dark:text-gray-600 mb-0.5">{dayData.meals.lunch.time}</div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400">{dayData.meals.lunch.food}</div>
+                  </div>
+                </div>
+              )}
+              {dayData.meals?.dinner?.food && (
+                <div className="flex items-start">
+                  <div className="w-24 text-sm font-medium text-gray-500 dark:text-gray-500">Dinner</div>
+                  <div className="flex-1">
+                    <div className="text-xs text-gray-400 dark:text-gray-600 mb-0.5">{dayData.meals.dinner.time}</div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400">{dayData.meals.dinner.food}</div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {!dayData.meals?.breakfast?.food && !dayData.meals?.lunch?.food && !dayData.meals?.dinner?.food && (!dayData.customEntries || dayData.customEntries.length === 0) && (
           <div className="text-sm text-gray-400 dark:text-gray-500 italic">No meals recorded</div>
         )}
       </div>
@@ -620,6 +631,9 @@ export default function Home() {
   const [username, setUsername] = useState('');
   const [authError, setAuthError] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  // Prevent the save-to-DB effect from firing before the initial load completes
+  const initialLoadDone = useRef(false);
   
   // Check authentication on mount
   useEffect(() => {
@@ -632,6 +646,7 @@ export default function Home() {
       loadMealsFromDB(token);
     } else {
       setIsLoading(false);
+      initialLoadDone.current = true;
       setShowAuthModal(true);
     }
   }, []);
@@ -648,6 +663,9 @@ export default function Home() {
       if (response.ok) {
         const data = await response.json();
         if (data.meals && data.meals.length > 0) {
+          // DB is the source of truth — update localStorage to match so
+          // stale local data can never overwrite the server copy later.
+          localStorage.setItem('meals', JSON.stringify(data.meals));
           setMeals(data.meals);
         } else {
           const localMeals = localStorage.getItem('meals');
@@ -666,6 +684,7 @@ export default function Home() {
       }
     } finally {
       setIsLoading(false);
+      initialLoadDone.current = true;
     }
   };
   
@@ -724,7 +743,12 @@ export default function Home() {
             setMeals(parsedMeals);
             saveMealsToDB(parsedMeals, data.token);
           }
+          initialLoadDone.current = true;
         } else {
+          // Reset the flag so the save-to-DB effect doesn't fire with stale
+          // hardcoded mealData before loadMealsFromDB has a chance to fetch
+          // the real data from the server.
+          initialLoadDone.current = false;
           loadMealsFromDB(data.token);
         }
       } else {
@@ -766,9 +790,10 @@ export default function Home() {
     }
   }, [isDarkMode]);
   
-  // Save meals to localStorage and DB whenever they change
+  // Save meals to localStorage and DB whenever they change,
+  // but only after the initial load has completed to avoid overwriting DB data
   useEffect(() => {
-    if (isAuthenticated && meals.length > 0) {
+    if (isAuthenticated && meals.length > 0 && initialLoadDone.current) {
       localStorage.setItem('meals', JSON.stringify(meals));
       saveMealsToDB(meals);
     }
@@ -906,44 +931,10 @@ export default function Home() {
       {/* Header */}
       <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-40 shadow-sm transition-colors">
         <div className="max-w-2xl mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            <h1 className="text-xl font-bold text-gray-900 dark:text-white">🍎 Meal Plan</h1>
-            {isAuthenticated && (
-              <span className="text-sm text-gray-600 dark:text-gray-400">@{username}</span>
-            )}
-          </div>
+          {/* Logo */}
+          <h1 className="text-xl font-bold text-gray-900 dark:text-white">🍎 Meal Plan</h1>
+
           <div className="flex items-center gap-2">
-            {/* Dark Mode Toggle */}
-            <button
-              onClick={toggleTheme}
-              className="p-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-              aria-label="Toggle theme"
-            >
-              {isDarkMode ? (
-                <svg className="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clipRule="evenodd" />
-                </svg>
-              ) : (
-                <svg className="w-5 h-5 text-gray-700" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
-                </svg>
-              )}
-            </button>
-            
-            {/* Logout Button */}
-            {isAuthenticated && (
-              <button
-                onClick={handleLogout}
-                className="p-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-                aria-label="Logout"
-                title="Logout"
-              >
-                <svg className="w-5 h-5 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                </svg>
-              </button>
-            )}
-            
             {/* All Meals Button */}
             <button
               onClick={() => setIsModalOpen(true)}
@@ -953,9 +944,117 @@ export default function Home() {
               <span className="text-sm hidden sm:inline">All Meals</span>
               <span className="text-xs bg-green-600 px-2 py-0.5 rounded-full">{meals.length}</span>
             </button>
+
+            {/* Hamburger Button */}
+            <button
+              onClick={() => setIsMenuOpen(true)}
+              className="p-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+              aria-label="Open menu"
+            >
+              <svg className="w-5 h-5 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
           </div>
         </div>
       </header>
+
+      {/* Hamburger Drawer Overlay */}
+      {isMenuOpen && (
+        <div className="fixed inset-0 z-50 flex justify-end">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black bg-opacity-40"
+            onClick={() => setIsMenuOpen(false)}
+          />
+          {/* Drawer */}
+          <div className="relative w-72 max-w-full bg-white dark:bg-gray-800 h-full shadow-2xl flex flex-col transition-colors">
+            {/* Drawer Header */}
+            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-gray-700">
+              <span className="text-lg font-bold text-gray-900 dark:text-white">Menu</span>
+              <button
+                onClick={() => setIsMenuOpen(false)}
+                className="p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                aria-label="Close menu"
+              >
+                <svg className="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Drawer Body */}
+            <div className="flex flex-col gap-1 px-3 py-4 flex-1">
+              {/* Username */}
+              {isAuthenticated && (
+                <div className="flex items-center gap-3 px-3 py-3 rounded-xl bg-gray-50 dark:bg-gray-700 mb-2">
+                  <div className="w-9 h-9 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center">
+                    <svg className="w-5 h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Signed in as</p>
+                    <p className="text-sm font-semibold text-gray-900 dark:text-white">@{username}</p>
+                  </div>
+                </div>
+              )}
+
+              {/* Dark / Light Mode */}
+              <button
+                onClick={() => { toggleTheme(); setIsMenuOpen(false); }}
+                className="flex items-center gap-3 w-full px-3 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-left"
+              >
+                <div className="w-9 h-9 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
+                  {isDarkMode ? (
+                    <svg className="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clipRule="evenodd" />
+                    </svg>
+                  ) : (
+                    <svg className="w-5 h-5 text-gray-700 dark:text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+                    </svg>
+                  )}
+                </div>
+                <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                  {isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+                </span>
+              </button>
+
+              {/* Dashboard */}
+              {isAuthenticated && (
+                <a
+                  href="/dashboard"
+                  className="flex items-center gap-3 w-full px-3 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <div className="w-9 h-9 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
+                    <svg className="w-5 h-5 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                  </div>
+                  <span className="text-sm font-medium text-gray-800 dark:text-gray-200">Dashboard</span>
+                </a>
+              )}
+
+              {/* Logout */}
+              {isAuthenticated && (
+                <button
+                  onClick={() => { handleLogout(); setIsMenuOpen(false); }}
+                  className="flex items-center gap-3 w-full px-3 py-3 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-left mt-auto"
+                >
+                  <div className="w-9 h-9 rounded-full bg-red-50 dark:bg-red-900/30 flex items-center justify-center">
+                    <svg className="w-5 h-5 text-red-500 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                  </div>
+                  <span className="text-sm font-medium text-red-600 dark:text-red-400">Logout</span>
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
       
       {/* Main Content */}
       <main className="max-w-2xl mx-auto px-4 py-6">
