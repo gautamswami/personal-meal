@@ -620,6 +620,65 @@ export default function Home() {
   const [username, setUsername] = useState('');
   const [authError, setAuthError] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [localStorageData, setLocalStorageData] = useState('');
+  
+  // Function to get all localStorage data and format it as text
+  const getAllLocalStorageData = () => {
+    const allData = {};
+    
+    // Get all keys from localStorage
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key) {
+        try {
+          const value = localStorage.getItem(key);
+          // Try to parse as JSON, if it fails, use as string
+          try {
+            const parsed = JSON.parse(value);
+            allData[key] = parsed;
+          } catch {
+            allData[key] = value;
+          }
+        } catch (error) {
+          allData[key] = 'Error reading value';
+        }
+      }
+    }
+    
+    // Format the data as readable text
+    let formattedText = '=== LocalStorage Data ===\n\n';
+    
+    Object.keys(allData).forEach(key => {
+      formattedText += `Key: ${key}\n`;
+      const value = allData[key];
+      
+      if (typeof value === 'object' && value !== null) {
+        if (Array.isArray(value)) {
+          formattedText += `Value (Array with ${value.length} items):\n`;
+          formattedText += JSON.stringify(value, null, 2);
+        } else {
+          formattedText += `Value (Object):\n`;
+          formattedText += JSON.stringify(value, null, 2);
+        }
+      } else {
+        formattedText += `Value: ${value}\n`;
+      }
+      formattedText += '\n' + '-'.repeat(50) + '\n\n';
+    });
+    
+    if (Object.keys(allData).length === 0) {
+      formattedText += 'No data found in localStorage\n';
+    }
+    
+    return formattedText;
+  };
+  
+  // Load localStorage data on mount and when meals change
+  useEffect(() => {
+    const formattedData = getAllLocalStorageData();
+    setLocalStorageData(formattedData);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [meals]); // Update when meals change to reflect latest localStorage state
   
   // Check authentication on mount
   useEffect(() => {
@@ -969,6 +1028,20 @@ export default function Home() {
           </div>
         )}
       </main>
+      
+      {/* LocalStorage Data Display Section */}
+      <div className="max-w-2xl mx-auto px-4 pb-6">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-5 transition-colors">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+            📦 LocalStorage Data
+          </h2>
+          <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 overflow-x-auto">
+            <pre className="text-xs text-gray-700 dark:text-gray-300 whitespace-pre-wrap font-mono">
+              {localStorageData || 'Loading localStorage data...'}
+            </pre>
+          </div>
+        </div>
+      </div>
       
       {/* Floating Action Button */}
       <button
