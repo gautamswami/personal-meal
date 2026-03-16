@@ -316,7 +316,64 @@ const mealData = [
       lunch: { time: '2:00 PM', food: 'Dal + sabzi + 1 roti + curd' },
       dinner: { time: '8:00 PM', food: 'Vegetable soup + sprouts' }
     }
-  }
+  },
+
+  // ── Fruit transition: 16–20 Mar ────────────────────────────────────────────
+  { date: '2026-03-16', meals: { breakfast: { time: '10:30 AM', food: 'Papaya' },     lunch: { time: '2:00 PM', food: 'Apple (2)' },      dinner: { time: '8:00 PM', food: 'Papaya' } } },
+  { date: '2026-03-17', meals: { breakfast: { time: '10:30 AM', food: 'Watermelon' }, lunch: { time: '2:00 PM', food: 'Banana (2)' },     dinner: { time: '8:00 PM', food: 'Watermelon' } } },
+  { date: '2026-03-18', meals: { breakfast: { time: '10:30 AM', food: 'Muskmelon' },  lunch: { time: '2:00 PM', food: 'Orange (3–4)' },   dinner: { time: '8:00 PM', food: 'Papaya' } } },
+  { date: '2026-03-19', meals: { breakfast: { time: '10:30 AM', food: 'Papaya' },     lunch: { time: '2:00 PM', food: 'Apple (2)' },      dinner: { time: '8:00 PM', food: 'Watermelon' } } },
+  { date: '2026-03-20', meals: { breakfast: { time: '10:30 AM', food: 'Watermelon' }, lunch: { time: '2:00 PM', food: 'Banana (2)' },     dinner: { time: '8:00 PM', food: 'Papaya' } } },
+
+  // ── Phase 1 – Fat Loss Plan ────────────────────────────────────────────────
+  // Week 1: 21–27 Mar
+  { date: '2026-03-21', meals: { breakfast: { time: '10:30 AM', food: '2 boiled eggs + cucumber + tomato' }, lunch: { time: '2:00 PM', food: 'Dal + sabji + 1 roti + salad' },        dinner: { time: '8:00 PM', food: 'Vegetable soup + sprouts' } } },
+  { date: '2026-03-22', meals: { breakfast: { time: '10:30 AM', food: 'Vegetable oats' },                   lunch: { time: '2:00 PM', food: 'Rajma + salad + 1 roti' },              dinner: { time: '8:00 PM', food: 'Paneer stir fry + vegetables' } } },
+  { date: '2026-03-23', meals: { breakfast: { time: '10:30 AM', food: 'Sprouts salad' },                    lunch: { time: '2:00 PM', food: 'Chole + salad + 1 roti' },              dinner: { time: '8:00 PM', food: '2 boiled eggs + salad' } } },
+  { date: '2026-03-24', meals: { breakfast: { time: '10:30 AM', food: 'Vegetable poha' },                   lunch: { time: '2:00 PM', food: 'Dal + sabji + 1 roti' },                dinner: { time: '8:00 PM', food: 'Vegetable soup' } } },
+  { date: '2026-03-25', meals: { breakfast: { time: '10:30 AM', food: '2 boiled eggs + vegetables' },       lunch: { time: '2:00 PM', food: 'Paneer bhurji + salad + 1 roti' },     dinner: { time: '8:00 PM', food: 'Sprouts salad' } } },
+  { date: '2026-03-26', meals: { breakfast: { time: '10:30 AM', food: 'Oats + vegetables' },                lunch: { time: '2:00 PM', food: 'Rajma + salad + 1 roti' },              dinner: { time: '8:00 PM', food: 'Paneer + stir fried vegetables' } } },
+  { date: '2026-03-27', meals: { breakfast: { time: '10:30 AM', food: 'Sprouts + cucumber + tomato' },      lunch: { time: '2:00 PM', food: 'Dal + sabji + 1 roti' },                dinner: { time: '8:00 PM', food: 'Vegetable soup + salad' } } },
+
+  // Week 2: 28 Mar – 3 Apr
+  { date: '2026-03-28', meals: { breakfast: { time: '10:30 AM', food: '2 eggs + vegetables' },              lunch: { time: '2:00 PM', food: 'Chole + salad + 1 roti' },              dinner: { time: '8:00 PM', food: 'Paneer + vegetables' } } },
+  { date: '2026-03-29', meals: { breakfast: { time: '10:30 AM', food: 'Vegetable oats' },                   lunch: { time: '2:00 PM', food: 'Dal + sabji + 1 roti' },                dinner: { time: '8:00 PM', food: 'Sprouts salad' } } },
+  { date: '2026-03-30', meals: { breakfast: { time: '10:30 AM', food: 'Sprouts salad' },                    lunch: { time: '2:00 PM', food: 'Rajma + salad + 1 roti' },              dinner: { time: '8:00 PM', food: 'Vegetable soup' } } },
+  { date: '2026-03-31', meals: { breakfast: { time: '10:30 AM', food: 'Vegetable poha' },                   lunch: { time: '2:00 PM', food: 'Paneer bhurji + salad + 1 roti' },     dinner: { time: '8:00 PM', food: 'Eggs + salad' } } },
+  { date: '2026-04-01', meals: { breakfast: { time: '10:30 AM', food: '2 boiled eggs + vegetables' },       lunch: { time: '2:00 PM', food: 'Dal + sabji + 1 roti' },                dinner: { time: '8:00 PM', food: 'Vegetable soup' } } },
+  { date: '2026-04-02', meals: { breakfast: { time: '10:30 AM', food: 'Oats + vegetables' },                lunch: { time: '2:00 PM', food: 'Rajma + salad + 1 roti' },              dinner: { time: '8:00 PM', food: 'Paneer + vegetables' } } },
+  { date: '2026-04-03', meals: { breakfast: { time: '10:30 AM', food: 'Sprouts salad' },                    lunch: { time: '2:00 PM', food: 'Chole + salad + 1 roti' },              dinner: { time: '8:00 PM', food: 'Eggs + salad' } } },
+
+  // Week 3: 4–10 Apr
+  { date: '2026-04-04', meals: { breakfast: { time: '10:30 AM', food: 'Vegetable oats' },                   lunch: { time: '2:00 PM', food: 'Dal + sabji + 1 roti' },                dinner: { time: '8:00 PM', food: 'Vegetable soup' } } },
+  { date: '2026-04-05', meals: { breakfast: { time: '10:30 AM', food: '2 boiled eggs + vegetables' },       lunch: { time: '2:00 PM', food: 'Rajma + salad + 1 roti' },              dinner: { time: '8:00 PM', food: 'Paneer stir fry' } } },
+  { date: '2026-04-06', meals: { breakfast: { time: '10:30 AM', food: 'Sprouts salad' },                    lunch: { time: '2:00 PM', food: 'Chole + salad + 1 roti' },              dinner: { time: '8:00 PM', food: 'Eggs + salad' } } },
+  { date: '2026-04-07', meals: { breakfast: { time: '10:30 AM', food: 'Vegetable poha' },                   lunch: { time: '2:00 PM', food: 'Dal + sabji + 1 roti' },                dinner: { time: '8:00 PM', food: 'Vegetable soup' } } },
+  { date: '2026-04-08', meals: { breakfast: { time: '10:30 AM', food: 'Oats + vegetables' },                lunch: { time: '2:00 PM', food: 'Paneer bhurji + 1 roti' },              dinner: { time: '8:00 PM', food: 'Sprouts salad' } } },
+  { date: '2026-04-09', meals: { breakfast: { time: '10:30 AM', food: '2 eggs + vegetables' },              lunch: { time: '2:00 PM', food: 'Rajma + salad + 1 roti' },              dinner: { time: '8:00 PM', food: 'Paneer + vegetables' } } },
+  { date: '2026-04-10', meals: { breakfast: { time: '10:30 AM', food: 'Sprouts salad' },                    lunch: { time: '2:00 PM', food: 'Dal + sabji + 1 roti' },                dinner: { time: '8:00 PM', food: 'Vegetable soup' } } },
+
+  // Weeks 4–6: 11–30 Apr — same 7-day rotation as Week 1
+  { date: '2026-04-11', meals: { breakfast: { time: '10:30 AM', food: '2 boiled eggs + cucumber + tomato' }, lunch: { time: '2:00 PM', food: 'Dal + sabji + 1 roti + salad' },   dinner: { time: '8:00 PM', food: 'Vegetable soup + sprouts' } } },
+  { date: '2026-04-12', meals: { breakfast: { time: '10:30 AM', food: 'Vegetable oats' },                   lunch: { time: '2:00 PM', food: 'Rajma + salad + 1 roti' },              dinner: { time: '8:00 PM', food: 'Paneer stir fry + vegetables' } } },
+  { date: '2026-04-13', meals: { breakfast: { time: '10:30 AM', food: 'Sprouts salad' },                    lunch: { time: '2:00 PM', food: 'Chole + salad + 1 roti' },              dinner: { time: '8:00 PM', food: '2 boiled eggs + salad' } } },
+  { date: '2026-04-14', meals: { breakfast: { time: '10:30 AM', food: 'Vegetable poha' },                   lunch: { time: '2:00 PM', food: 'Dal + sabji + 1 roti' },                dinner: { time: '8:00 PM', food: 'Vegetable soup' } } },
+  { date: '2026-04-15', meals: { breakfast: { time: '10:30 AM', food: '2 boiled eggs + vegetables' },       lunch: { time: '2:00 PM', food: 'Paneer bhurji + salad + 1 roti' },     dinner: { time: '8:00 PM', food: 'Sprouts salad' } } },
+  { date: '2026-04-16', meals: { breakfast: { time: '10:30 AM', food: 'Oats + vegetables' },                lunch: { time: '2:00 PM', food: 'Rajma + salad + 1 roti' },              dinner: { time: '8:00 PM', food: 'Paneer + stir fried vegetables' } } },
+  { date: '2026-04-17', meals: { breakfast: { time: '10:30 AM', food: 'Sprouts + cucumber + tomato' },      lunch: { time: '2:00 PM', food: 'Dal + sabji + 1 roti' },                dinner: { time: '8:00 PM', food: 'Vegetable soup + salad' } } },
+  { date: '2026-04-18', meals: { breakfast: { time: '10:30 AM', food: '2 boiled eggs + cucumber + tomato' }, lunch: { time: '2:00 PM', food: 'Dal + sabji + 1 roti + salad' },   dinner: { time: '8:00 PM', food: 'Vegetable soup + sprouts' } } },
+  { date: '2026-04-19', meals: { breakfast: { time: '10:30 AM', food: 'Vegetable oats' },                   lunch: { time: '2:00 PM', food: 'Rajma + salad + 1 roti' },              dinner: { time: '8:00 PM', food: 'Paneer stir fry + vegetables' } } },
+  { date: '2026-04-20', meals: { breakfast: { time: '10:30 AM', food: 'Sprouts salad' },                    lunch: { time: '2:00 PM', food: 'Chole + salad + 1 roti' },              dinner: { time: '8:00 PM', food: '2 boiled eggs + salad' } } },
+  { date: '2026-04-21', meals: { breakfast: { time: '10:30 AM', food: 'Vegetable poha' },                   lunch: { time: '2:00 PM', food: 'Dal + sabji + 1 roti' },                dinner: { time: '8:00 PM', food: 'Vegetable soup' } } },
+  { date: '2026-04-22', meals: { breakfast: { time: '10:30 AM', food: '2 boiled eggs + vegetables' },       lunch: { time: '2:00 PM', food: 'Paneer bhurji + salad + 1 roti' },     dinner: { time: '8:00 PM', food: 'Sprouts salad' } } },
+  { date: '2026-04-23', meals: { breakfast: { time: '10:30 AM', food: 'Oats + vegetables' },                lunch: { time: '2:00 PM', food: 'Rajma + salad + 1 roti' },              dinner: { time: '8:00 PM', food: 'Paneer + stir fried vegetables' } } },
+  { date: '2026-04-24', meals: { breakfast: { time: '10:30 AM', food: 'Sprouts + cucumber + tomato' },      lunch: { time: '2:00 PM', food: 'Dal + sabji + 1 roti' },                dinner: { time: '8:00 PM', food: 'Vegetable soup + salad' } } },
+  { date: '2026-04-25', meals: { breakfast: { time: '10:30 AM', food: '2 boiled eggs + cucumber + tomato' }, lunch: { time: '2:00 PM', food: 'Dal + sabji + 1 roti + salad' },   dinner: { time: '8:00 PM', food: 'Vegetable soup + sprouts' } } },
+  { date: '2026-04-26', meals: { breakfast: { time: '10:30 AM', food: 'Vegetable oats' },                   lunch: { time: '2:00 PM', food: 'Rajma + salad + 1 roti' },              dinner: { time: '8:00 PM', food: 'Paneer stir fry + vegetables' } } },
+  { date: '2026-04-27', meals: { breakfast: { time: '10:30 AM', food: 'Sprouts salad' },                    lunch: { time: '2:00 PM', food: 'Chole + salad + 1 roti' },              dinner: { time: '8:00 PM', food: '2 boiled eggs + salad' } } },
+  { date: '2026-04-28', meals: { breakfast: { time: '10:30 AM', food: 'Vegetable poha' },                   lunch: { time: '2:00 PM', food: 'Dal + sabji + 1 roti' },                dinner: { time: '8:00 PM', food: 'Vegetable soup' } } },
+  { date: '2026-04-29', meals: { breakfast: { time: '10:30 AM', food: '2 boiled eggs + vegetables' },       lunch: { time: '2:00 PM', food: 'Paneer bhurji + salad + 1 roti' },     dinner: { time: '8:00 PM', food: 'Sprouts salad' } } },
+  { date: '2026-04-30', meals: { breakfast: { time: '10:30 AM', food: 'Oats + vegetables' },                lunch: { time: '2:00 PM', food: 'Rajma + salad + 1 roti' },              dinner: { time: '8:00 PM', food: 'Paneer + stir fried vegetables' } } },
 ];
 
 // Helper function to format date
@@ -340,8 +397,17 @@ const isToday = (dateStr) => {
   return today.toDateString() === checkDate.toDateString();
 };
 
-// MealCard Component
-function MealCard({ dayData, showAsToday, onAddMeal }) {
+// ── parse a stored entry string into { time, food } ──────────────────────────
+function parseEntry(entry) {
+  const dashIdx = entry.indexOf('–');
+  if (dashIdx !== -1) {
+    return { time: entry.slice(0, dashIdx).trim(), food: entry.slice(dashIdx + 1).trim() };
+  }
+  return { time: '', food: entry };
+}
+
+// ── MealCard Component ────────────────────────────────────────────────────────
+function MealCard({ dayData, showAsToday, onAddMeal, onEditEntry, onDeleteEntry }) {
   const formattedDate = formatDate(dayData.date);
   const isTodayDate = isToday(dayData.date);
   
@@ -381,10 +447,47 @@ function MealCard({ dayData, showAsToday, onAddMeal }) {
             <div className="flex items-center gap-2 mb-2">
               <span className="text-xs font-semibold text-green-700 dark:text-green-400 uppercase tracking-wide">What I Ate</span>
             </div>
-            <div className="space-y-1">
-              {dayData.customEntries.map((entry, i) => (
-                <div key={i} className="text-sm text-gray-800 dark:text-gray-200">{entry}</div>
-              ))}
+            <div className="space-y-2">
+              {dayData.customEntries.map((entry, i) => {
+                const { time, food } = parseEntry(entry);
+                return (
+                  <div key={i} className="flex items-start gap-2 group">
+                    <div className="flex-1 min-w-0">
+                      {time && <span className="text-xs text-green-600 dark:text-green-500 mr-1">{time}</span>}
+                      <span className="text-sm text-gray-800 dark:text-gray-200">{food}</span>
+                    </div>
+                    {/* Edit / Delete buttons */}
+                    {(onEditEntry || onDeleteEntry) && (
+                      <div className="flex items-center gap-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                        {onEditEntry && (
+                          <button
+                            onClick={() => onEditEntry(dayData.date, i, entry)}
+                            className="p-1 rounded hover:bg-green-100 dark:hover:bg-green-800 text-green-600 dark:text-green-400 transition-colors"
+                            aria-label="Edit entry"
+                            title="Edit"
+                          >
+                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                          </button>
+                        )}
+                        {onDeleteEntry && (
+                          <button
+                            onClick={() => onDeleteEntry(dayData.date, i)}
+                            className="p-1 rounded hover:bg-red-100 dark:hover:bg-red-900/40 text-red-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
+                            aria-label="Delete entry"
+                            title="Delete"
+                          >
+                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                          </button>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}
@@ -553,66 +656,186 @@ function AddMealModal({ isOpen, onClose, onAddCustomEntry, preSelectedDate }) {
   );
 }
 
-// Modal Component with optimized rendering
-function Modal({ isOpen, onClose, meals, onAddMealForDate }) {
-  const [visibleCount, setVisibleCount] = useState(10);
-  
-  // Reset visible count when modal closes
+// ── Edit Meal Modal ────────────────────────────────────────────────────────────
+function EditMealModal({ isOpen, onClose, onSave, entry, date }) {
+  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedTime, setSelectedTime] = useState('');
+  const [foodDescription, setFoodDescription] = useState('');
+
+  // Pre-fill from the existing entry when the modal opens
   useEffect(() => {
-    if (!isOpen) {
-      setVisibleCount(10);
+    if (isOpen && entry !== null) {
+      setSelectedDate(date || '');
+      const { time, food } = parseEntry(entry);
+      setFoodDescription(food);
+
+      if (time) {
+        // Convert "3:35 PM" → "15:35" for the time input
+        const match = time.match(/(\d+):(\d+)\s*(AM|PM)/i);
+        if (match) {
+          let h = parseInt(match[1]);
+          const m = match[2];
+          const period = match[3].toUpperCase();
+          if (period === 'PM' && h !== 12) h += 12;
+          if (period === 'AM' && h === 12) h = 0;
+          setSelectedTime(`${String(h).padStart(2, '0')}:${m}`);
+        } else {
+          setSelectedTime('');
+        }
+      } else {
+        const now = new Date();
+        setSelectedTime(`${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`);
+      }
     }
-  }, [isOpen]);
-  
-  if (!isOpen) return null;
-  
-  const sortedMeals = [...meals].sort((a, b) => new Date(a.date) - new Date(b.date));
-  const visibleMeals = sortedMeals.slice(0, visibleCount);
-  const hasMore = visibleCount < sortedMeals.length;
-  
-  const loadMore = () => {
-    setVisibleCount(prev => Math.min(prev + 10, sortedMeals.length));
+  }, [isOpen, entry, date]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!selectedDate || !selectedTime || !foodDescription) return;
+
+    const [hours, minutes] = selectedTime.split(':');
+    const hour = parseInt(hours);
+    const ampm = hour >= 12 ? 'PM' : 'AM';
+    const displayHour = hour % 12 || 12;
+    const formattedTime = `${displayHour}:${minutes} ${ampm}`;
+
+    onSave(selectedDate, formattedTime, foodDescription);
+    onClose();
   };
-  
+
+  if (!isOpen) return null;
+
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
-      <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70" onClick={onClose}></div>
-      <div className="relative min-h-screen flex items-start justify-center p-4">
-        <div className="relative bg-gray-50 dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-2xl my-8 max-h-[90vh] overflow-y-auto transition-colors">
-          <div className="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4 rounded-t-2xl flex justify-between items-center z-10 shadow-sm transition-colors">
+      <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70" onClick={onClose} />
+      <div className="relative min-h-screen flex items-center justify-center p-4">
+        <div className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md transition-colors">
+          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Edit Meal</h2>
+            <button onClick={onClose} className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 text-3xl font-light leading-none">×</button>
+          </div>
+
+          <form onSubmit={handleSubmit} className="p-6 space-y-4">
             <div>
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">All Meals</h2>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                {sortedMeals.length} days • {sortedMeals[0]?.date && formatDate(sortedMeals[0].date).fullDate} - {sortedMeals[sortedMeals.length - 1]?.date && formatDate(sortedMeals[sortedMeals.length - 1].date).fullDate}
-              </p>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Date</label>
+              <input
+                type="date"
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                required
+              />
             </div>
-            <button
-              onClick={onClose}
-              className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 text-3xl font-light leading-none w-8 h-8 flex items-center justify-center transition-colors"
-            >
-              ×
-            </button>
-          </div>
-          <div className="p-6">
-            {visibleMeals.map((dayData, index) => (
-              <MealCard key={dayData.date} dayData={dayData} onAddMeal={onAddMealForDate} />
-            ))}
-            
-            {hasMore && (
-              <button
-                onClick={loadMore}
-                className="w-full py-3 px-4 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium rounded-xl border border-gray-200 dark:border-gray-700 transition-colors shadow-sm"
-              >
-                Load More ({sortedMeals.length - visibleCount} more days)
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Time</label>
+              <input
+                type="time"
+                value={selectedTime}
+                onChange={(e) => setSelectedTime(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">What did you eat?</label>
+              <textarea
+                value={foodDescription}
+                onChange={(e) => setFoodDescription(e.target.value)}
+                placeholder="e.g., Aalo parathe, coffee, etc."
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
+                rows="3"
+                required
+              />
+            </div>
+
+            <div className="flex gap-3 pt-4">
+              <button type="button" onClick={onClose} className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                Cancel
               </button>
-            )}
-            
-            {!hasMore && sortedMeals.length > 10 && (
-              <div className="text-center py-4 text-sm text-gray-500 dark:text-gray-400">
-                All {sortedMeals.length} days loaded
-              </div>
-            )}
+              <button type="submit" className="flex-1 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors font-medium">
+                Save Changes
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── All Meals Modal ─────────────────────────────────────────────────────────────
+function Modal({ isOpen, onClose, meals, onAddMealForDate, onEditEntry, onDeleteEntry }) {
+  const scrollRef = useRef(null);
+
+  const sortedMeals = [...meals].sort((a, b) => new Date(a.date) - new Date(b.date));
+
+  // Target = yesterday (today − 1 day). Fall back to the closest past date.
+  const todayStr     = new Date().toISOString().split('T')[0];
+  const yesterday    = new Date(); yesterday.setDate(yesterday.getDate() - 1);
+  const yesterdayStr = yesterday.toISOString().split('T')[0];
+  const targetDate   =
+    sortedMeals.find(m => m.date === yesterdayStr)?.date ||
+    [...sortedMeals].reverse().find(m => m.date <= yesterdayStr)?.date ||
+    sortedMeals[0]?.date;
+
+  // Scroll to the target date each time the modal opens
+  useEffect(() => {
+    if (!isOpen || !scrollRef.current || !targetDate) return;
+    // rAF ensures the list has rendered before we scroll
+    const id = requestAnimationFrame(() => {
+      const el = scrollRef.current?.querySelector(`[data-date="${targetDate}"]`);
+      if (el) el.scrollIntoView({ block: 'start', behavior: 'instant' });
+    });
+    return () => cancelAnimationFrame(id);
+  }, [isOpen, targetDate]);
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-start justify-center p-4">
+      <div className="absolute inset-0 bg-black bg-opacity-50 dark:bg-opacity-70" onClick={onClose} />
+      <div className="relative bg-gray-50 dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-2xl my-8 flex flex-col max-h-[90vh] transition-colors">
+        {/* Sticky header */}
+        <div className="shrink-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4 rounded-t-2xl flex justify-between items-center shadow-sm transition-colors">
+          <div>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">All Meals</h2>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              {sortedMeals.length} days &nbsp;·&nbsp;
+              {sortedMeals[0]?.date && formatDate(sortedMeals[0].date).fullDate}
+              {' – '}
+              {sortedMeals[sortedMeals.length - 1]?.date && formatDate(sortedMeals[sortedMeals.length - 1].date).fullDate}
+            </p>
           </div>
+          <button
+            onClick={onClose}
+            className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 text-3xl font-light leading-none w-8 h-8 flex items-center justify-center transition-colors"
+          >
+            ×
+          </button>
+        </div>
+
+        {/* Scrollable body — all days rendered so scrollIntoView works */}
+        <div ref={scrollRef} className="overflow-y-auto flex-1 p-6">
+          {sortedMeals.map((dayData) => (
+            <div key={dayData.date} data-date={dayData.date}>
+              {/* "Today" divider */}
+              {dayData.date === todayStr && (
+                <div className="flex items-center gap-3 my-2 -mx-1">
+                  <div className="flex-1 h-px bg-green-300 dark:bg-green-700" />
+                  <span className="text-xs font-semibold text-green-600 dark:text-green-400 uppercase tracking-wide">Today</span>
+                  <div className="flex-1 h-px bg-green-300 dark:bg-green-700" />
+                </div>
+              )}
+              <MealCard
+                dayData={dayData}
+                onAddMeal={onAddMealForDate}
+                onEditEntry={onEditEntry}
+                onDeleteEntry={onDeleteEntry}
+              />
+            </div>
+          ))}
         </div>
       </div>
     </div>
@@ -632,6 +855,8 @@ export default function Home() {
   const [authError, setAuthError] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  // Edit modal state
+  const [editModal, setEditModal] = useState({ isOpen: false, date: null, entryIndex: null, entry: null });
   // Prevent the save-to-DB effect from firing before the initial load completes
   const initialLoadDone = useRef(false);
   
@@ -846,6 +1071,32 @@ export default function Home() {
     }
   };
   
+  // Edit an existing custom entry
+  const editCustomEntry = (date, entryIndex, newTime, newFood) => {
+    const updatedMeals = meals.map(day => {
+      if (day.date !== date) return day;
+      const entries = [...(day.customEntries || [])];
+      entries[entryIndex] = `${newTime} – ${newFood}`;
+      return { ...day, customEntries: entries };
+    });
+    setMeals(updatedMeals);
+  };
+
+  // Delete a custom entry
+  const deleteCustomEntry = (date, entryIndex) => {
+    const updatedMeals = meals.map(day => {
+      if (day.date !== date) return day;
+      const entries = (day.customEntries || []).filter((_, i) => i !== entryIndex);
+      return { ...day, customEntries: entries };
+    });
+    setMeals(updatedMeals);
+  };
+
+  // Open the edit modal
+  const handleEditEntry = (date, entryIndex, entry) => {
+    setEditModal({ isOpen: true, date, entryIndex, entry });
+  };
+
   // Function to handle adding meal from a specific date
   const handleAddMealForDate = (date) => {
     setPreSelectedDate(date);
@@ -1059,7 +1310,14 @@ export default function Home() {
       {/* Main Content */}
       <main className="max-w-2xl mx-auto px-4 py-6">
         {displayMeals.map((dayData, index) => (
-          <MealCard key={index} dayData={dayData} showAsToday={index === 0} />
+          <MealCard
+            key={dayData.date}
+            dayData={dayData}
+            showAsToday={index === 0}
+            onAddMeal={handleAddMealForDate}
+            onEditEntry={handleEditEntry}
+            onDeleteEntry={deleteCustomEntry}
+          />
         ))}
         
         {displayMeals.length === 0 && (
@@ -1081,17 +1339,26 @@ export default function Home() {
       </button>
       
       {/* Modals */}
-      <Modal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
         meals={meals}
         onAddMealForDate={handleAddMealForDate}
+        onEditEntry={handleEditEntry}
+        onDeleteEntry={deleteCustomEntry}
       />
-      <AddMealModal 
-        isOpen={isAddMealOpen} 
+      <AddMealModal
+        isOpen={isAddMealOpen}
         onClose={handleCloseAddMeal}
         onAddCustomEntry={addCustomEntry}
         preSelectedDate={preSelectedDate}
+      />
+      <EditMealModal
+        isOpen={editModal.isOpen}
+        onClose={() => setEditModal({ isOpen: false, date: null, entryIndex: null, entry: null })}
+        onSave={(date, time, food) => editCustomEntry(date, editModal.entryIndex, time, food)}
+        entry={editModal.entry}
+        date={editModal.date}
       />
     </div>
   );
