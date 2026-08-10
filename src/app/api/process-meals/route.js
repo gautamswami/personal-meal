@@ -1,21 +1,7 @@
 import { NextResponse } from 'next/server';
 import clientPromise from '@/lib/mongodb';
-import jwt from 'jsonwebtoken';
+import { verifyToken } from '@/lib/auth';
 import { parseMealText, batchParseMeals } from '@/lib/foodRecognition';
-
-function verifyToken(request) {
-  const authHeader = request.headers.get('authorization');
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return null;
-  }
-
-  const token = authHeader.substring(7);
-  try {
-    return jwt.verify(token, process.env.JWT_SECRET);
-  } catch (error) {
-    return null;
-  }
-}
 
 export async function POST(request) {
   try {
