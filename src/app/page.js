@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import AuthScreen from '@/components/journey/AuthScreen';
 import BottomNav from '@/components/journey/BottomNav';
+import DatePickerModal from '@/components/journey/DatePickerModal';
 import FoodIntakeCard from '@/components/journey/FoodIntakeCard';
 import HabitCard from '@/components/journey/HabitCard';
 import MealAddModal from '@/components/journey/MealAddModal';
@@ -36,44 +37,71 @@ function authHeaders(token) {
   };
 }
 
+function emptyDay(date) {
+  return {
+    date,
+    habits: { ...EMPTY_HABITS },
+    meals: [],
+    wakeTime: null,
+    sleepTime: null,
+  };
+}
+
+function normalizeDay(data, fallbackDate) {
+  return {
+    date: data?.date || fallbackDate,
+    habits: { ...EMPTY_HABITS, ...(data?.habits || {}) },
+    meals: data?.meals || [],
+    wakeTime: data?.wakeTime ?? null,
+    sleepTime: data?.sleepTime ?? null,
+  };
+}
+
 export default function TodayPage() {
   const [token, setToken] = useState(null);
   const [username, setUsername] = useState('');
   const [bootstrapping, setBootstrapping] = useState(true);
   const [journey, setJourney] = useState(null);
   const [day, setDay] = useState(null);
+  const [dayLoading, setDayLoading] = useState(false);
   const [starting, setStarting] = useState(false);
   const [notesHabit, setNotesHabit] = useState(null);
   const [mealModalOpen, setMealModalOpen] = useState(false);
+  const [datePickerOpen, setDatePickerOpen] = useState(false);
 
   const todayStr = useMemo(() => formatDateLocal(new Date()), []);
+  const [selectedDate, setSelectedDate] = useState(todayStr);
 
-  const loadJourneyAndDay = useCallback(async (authToken) => {
-    const [jRes, dRes] = await Promise.all([
-      fetch('/api/journey', { headers: authHeaders(authToken) }),
-      fetch(`/api/days/${todayStr}`, { headers: authHeaders(authToken) }),
-    ]);
-    const jData = await jRes.json();
-    const dData = await dRes.json();
-    if (jRes.ok) setJourney(jData.journey);
-    if (dRes.ok) {
-      setDay({
-        date: dData.day.date,
-        habits: { ...EMPTY_HABITS, ...dData.day.habits },
-        meals: dData.day.meals || [],
-        wakeTime: dData.day.wakeTime,
-        sleepTime: dData.day.sleepTime,
+  const loadDay = useCallback(async (authToken, date) => {
+    setDayLoading(true);
+    try {
+      const dRes = await fetch(`/api/days/${date}`, {
+        headers: authHeaders(authToken),
       });
-    } else {
-      setDay({
-        date: todayStr,
-        habits: { ...EMPTY_HABITS },
-        meals: [],
-        wakeTime: null,
-        sleepTime: null,
-      });
+      const dData = await dRes.json();
+      if (dRes.ok) {
+        setDay(normalizeDay(dData.day, date));
+      } else {
+        setDay(emptyDay(date));
+      }
+    } catch {
+      setDay(emptyDay(date));
+    } finally {
+      setDayLoading(false);
     }
-  }, [todayStr]);
+  }, []);
+
+  const loadJourneyAndDay = useCallback(
+    async (authToken, date = todayStr) => {
+      const jRes = await fetch('/api/journey', {
+        headers: authHeaders(authToken),
+      });
+      const jData = await jRes.json();
+      if (jRes.ok) setJourney(jData.journey);
+      await loadDay(authToken, date);
+    },
+    [loadDay, todayStr]
+  );
 
   useEffect(() => {
     const t = localStorage.getItem('token');
@@ -81,14 +109,24 @@ export default function TodayPage() {
     if (t) {
       setToken(t);
       setUsername(u || '');
-      loadJourneyAndDay(t).finally(() => setBootstrapping(false));
+      loadJourneyAndDay(t, selectedDate).finally(() => setBootstrapping(false));
     } else {
       setBootstrapping(false);
     }
-  }, [loadJourneyAndDay]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- bootstrap once on mount
+  }, []);
+
+  const selectDate = async (date) => {
+    setDatePickerOpen(false);
+    if (date === selectedDate) return;
+    setSelectedDate(date);
+    setNotesHabit(null);
+    if (token) await loadDay(token, date);
+  };
 
   const patchDay = async (patch) => {
     if (!token || !day) return;
+    const date = selectedDate;
     const prev = day;
     const next = {
       ...day,
@@ -97,20 +135,14 @@ export default function TodayPage() {
     };
     setDay(next);
     try {
-      const res = await fetch(`/api/days/${todayStr}`, {
+      const res = await fetch(`/api/days/${date}`, {
         method: 'PATCH',
         headers: authHeaders(token),
         body: JSON.stringify(patch),
       });
       const data = await res.json();
       if (res.ok) {
-        setDay({
-          date: data.day.date,
-          habits: { ...EMPTY_HABITS, ...data.day.habits },
-          meals: data.day.meals || [],
-          wakeTime: data.day.wakeTime,
-          sleepTime: data.day.sleepTime,
-        });
+        setDay(normalizeDay(data.day, date));
       } else {
         setDay(prev);
       }
@@ -148,7 +180,7 @@ export default function TodayPage() {
 
   const addMeal = async ({ text, time }) => {
     if (!token) return;
-    const res = await fetch(`/api/days/${todayStr}/meals`, {
+    const res = await fetch(`/api/days/${selectedDate}/meals`, {
       method: 'POST',
       headers: authHeaders(token),
       body: JSON.stringify({ text, time }),
@@ -162,10 +194,13 @@ export default function TodayPage() {
 
   const deleteMeal = async (id) => {
     if (!token) return;
-    const res = await fetch(`/api/days/${todayStr}/meals?id=${encodeURIComponent(id)}`, {
-      method: 'DELETE',
-      headers: authHeaders(token),
-    });
+    const res = await fetch(
+      `/api/days/${selectedDate}/meals?id=${encodeURIComponent(id)}`,
+      {
+        method: 'DELETE',
+        headers: authHeaders(token),
+      }
+    );
     const data = await res.json();
     if (res.ok) setDay((d) => ({ ...d, meals: data.meals }));
   };
@@ -179,7 +214,11 @@ export default function TodayPage() {
         body: JSON.stringify({ startDate: todayStr }),
       });
       const data = await res.json();
-      if (res.ok) setJourney(data.journey);
+      if (res.ok) {
+        setJourney(data.journey);
+        setSelectedDate(todayStr);
+        await loadDay(token, todayStr);
+      }
     } finally {
       setStarting(false);
     }
@@ -192,6 +231,7 @@ export default function TodayPage() {
     setUsername('');
     setJourney(null);
     setDay(null);
+    setSelectedDate(todayStr);
   };
 
   if (bootstrapping) {
@@ -209,38 +249,68 @@ export default function TodayPage() {
           setToken(t);
           setUsername(u);
           setBootstrapping(true);
-          loadJourneyAndDay(t).finally(() => setBootstrapping(false));
+          setSelectedDate(todayStr);
+          loadJourneyAndDay(t, todayStr).finally(() => setBootstrapping(false));
         }}
       />
     );
   }
 
-  const dayNum = journey ? journeyDayNumber(journey.startDate, todayStr) : null;
-  const cycleInfo = journey ? journeyCycleInfo(journey.startDate, todayStr) : null;
+  const dayNum = journey ? journeyDayNumber(journey.startDate, selectedDate) : null;
+  const cycleInfo = journey ? journeyCycleInfo(journey.startDate, selectedDate) : null;
   const doneCount = dayChecklistCount(day);
   const percent = dayPercent(day);
   const canLog = journey && dayNum !== null;
+  const isToday = selectedDate === todayStr;
+  const minDate = journey?.startDate || todayStr;
 
   return (
     <div className="journey-shell pb-20">
       <div className="max-w-md mx-auto px-4 pt-5 space-y-3">
         <div className="flex items-start justify-between gap-3">
-          <div>
+          <div className="min-w-0">
             {canLog ? (
               <p className="text-[11px] tracking-widest text-[#8e8e93] uppercase">
                 Day {dayNum}
                 {cycleInfo ? ` · Cycle ${cycleInfo.cycle} · ${cycleInfo.dayInCycle}/30` : ''}
+                {!isToday ? ' · Past' : ''}
               </p>
             ) : (
               <p className="text-[11px] tracking-widest text-[#8e8e93] uppercase">
                 Journey
               </p>
             )}
-            <h1 className="text-2xl font-bold text-white leading-tight">
-              {formatDisplayDate(todayStr)}
-            </h1>
+            {canLog ? (
+              <button
+                type="button"
+                onClick={() => setDatePickerOpen(true)}
+                className="group flex items-center gap-1.5 text-left"
+                aria-label="Pick a date to edit"
+              >
+                <h1 className="text-2xl font-bold text-white leading-tight group-hover:text-[#a3e635] transition-colors">
+                  {formatDisplayDate(selectedDate)}
+                </h1>
+                <svg
+                  className="w-4 h-4 text-[#8e8e93] group-hover:text-[#a3e635] shrink-0 mt-1"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+              </button>
+            ) : (
+              <h1 className="text-2xl font-bold text-white leading-tight">
+                {formatDisplayDate(todayStr)}
+              </h1>
+            )}
           </div>
-          <div className="text-right">
+          <div className="text-right shrink-0">
             {canLog ? (
               <>
                 <p className="text-2xl font-bold text-[#a3e635] leading-none">{percent}%</p>
@@ -258,6 +328,16 @@ export default function TodayPage() {
           </div>
         </div>
 
+        {canLog && !isToday ? (
+          <button
+            type="button"
+            onClick={() => selectDate(todayStr)}
+            className="text-xs text-[#a3e635] font-medium"
+          >
+            ← Back to today
+          </button>
+        ) : null}
+
         {canLog ? (
           <div className="h-1 rounded-full bg-[#2c2c2e] overflow-hidden">
             <div
@@ -274,6 +354,8 @@ export default function TodayPage() {
             <p className="text-white font-medium">Journey starts {journey.startDate}</p>
             <p className="text-sm text-[#8e8e93]">Come back on that day to begin logging.</p>
           </div>
+        ) : dayLoading ? (
+          <div className="py-16 text-center text-[#8e8e93] text-sm">Loading day…</div>
         ) : (
           <>
             <div className="grid grid-cols-3 gap-2.5">
@@ -370,6 +452,15 @@ export default function TodayPage() {
         open={mealModalOpen}
         onClose={() => setMealModalOpen(false)}
         onSave={addMeal}
+      />
+
+      <DatePickerModal
+        open={datePickerOpen}
+        value={selectedDate}
+        min={minDate}
+        max={todayStr}
+        onClose={() => setDatePickerOpen(false)}
+        onSelect={selectDate}
       />
     </div>
   );
