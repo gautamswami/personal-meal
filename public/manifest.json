@@ -1,11 +1,11 @@
 {
-  "name": "Meal Plan",
-  "short_name": "Meal Plan",
-  "description": "Track your daily meals and nutrition",
+  "name": "Journey",
+  "short_name": "Journey",
+  "description": "Track habits, meals, wake and sleep — open-ended, shown in 30-day cycles",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#f9fafb",
-  "theme_color": "#22c55e",
+  "background_color": "#000000",
+  "theme_color": "#000000",
   "orientation": "portrait-primary",
   "icons": [
     {

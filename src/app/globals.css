@@ -2,10 +2,30 @@
 
 @variant dark (.dark &);
 
-body {
-  font-family: Arial, Helvetica, sans-serif;
+:root {
+  --j-bg: #000000;
+  --j-card: #1c1c1e;
+  --j-card-border: #2c2c2e;
+  --j-accent: #a3e635;
+  --j-muted: #8e8e93;
+  --j-text: #ffffff;
+  --j-text-secondary: #aeaeb2;
 }
 
+body {
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  background: var(--j-bg);
+  color: var(--j-text);
+}
 
+.journey-shell {
+  background: var(--j-bg);
+  color: var(--j-text);
+  min-height: 100dvh;
+}
 
-/* deploy again again */
+.journey-card {
+  background: var(--j-card);
+  border: 1px solid var(--j-card-border);
+  border-radius: 14px;
+}
