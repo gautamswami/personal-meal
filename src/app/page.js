@@ -11,13 +11,16 @@ import NotesModal from '@/components/journey/NotesModal';
 import StartJourney from '@/components/journey/StartJourney';
 import TimeCard from '@/components/journey/TimeCard';
 import {
+  CHECKLIST_TOTAL,
   dayChecklistCount,
   dayPercent,
   EMPTY_HABITS,
   formatDateLocal,
   formatDisplayDate,
+  HABIT_META,
   journeyCycleInfo,
   journeyDayNumber,
+  NOTE_HABITS,
 } from '@/lib/journey';
 
 const HABIT_ROW1 = [
@@ -28,6 +31,7 @@ const HABIT_ROW1 = [
 const HABIT_ROW2 = [
   { key: 'work', label: 'Work' },
   { key: 'learn', label: 'Learn' },
+  { key: 'travel', label: 'Travel' },
 ];
 
 function authHeaders(token) {
@@ -157,7 +161,7 @@ export default function TodayPage() {
       habits: {
         [key]: {
           done: !current,
-          ...(key === 'work' || key === 'learn'
+          ...(NOTE_HABITS.includes(key)
             ? { notes: day?.habits?.[key]?.notes || '' }
             : {}),
         },
@@ -314,7 +318,7 @@ export default function TodayPage() {
             {canLog ? (
               <>
                 <p className="text-2xl font-bold text-[#a3e635] leading-none">{percent}%</p>
-                <p className="text-xs text-[#8e8e93] mt-1">{doneCount}/7 done</p>
+                <p className="text-xs text-[#8e8e93] mt-1">{doneCount}/{CHECKLIST_TOTAL} done</p>
               </>
             ) : (
               <button
@@ -370,7 +374,7 @@ export default function TodayPage() {
               ))}
             </div>
 
-            <div className="grid grid-cols-2 gap-2.5">
+            <div className="grid grid-cols-3 gap-2.5">
               {HABIT_ROW2.map((h) => (
                 <HabitCard
                   key={h.key}
@@ -381,7 +385,6 @@ export default function TodayPage() {
                   showNotes
                   hasNotes={!!day?.habits?.[h.key]?.notes}
                   onNotes={() => setNotesHabit(h.key)}
-                  wide
                 />
               ))}
             </div>
@@ -442,7 +445,7 @@ export default function TodayPage() {
 
       <NotesModal
         open={!!notesHabit}
-        title={notesHabit === 'work' ? 'Work' : 'Learn'}
+        title={notesHabit ? HABIT_META[notesHabit]?.label || 'Notes' : 'Notes'}
         initialNotes={notesHabit ? day?.habits?.[notesHabit]?.notes || '' : ''}
         onClose={() => setNotesHabit(null)}
         onSave={saveNotes}

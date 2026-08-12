@@ -5,8 +5,8 @@ import Link from 'next/link';
 import AuthScreen from '@/components/journey/AuthScreen';
 import BottomNav from '@/components/journey/BottomNav';
 import HabitCompletionList from '@/components/journey/HabitCompletionList';
+import HabitStreaks from '@/components/journey/HabitStreaks';
 import Heatmap from '@/components/journey/Heatmap';
-import ProgressStats from '@/components/journey/ProgressStats';
 import StartJourney from '@/components/journey/StartJourney';
 import { formatDateLocal } from '@/lib/journey';
 
@@ -90,9 +90,8 @@ export default function ProgressPage() {
           <StartJourney onStart={startJourney} loading={starting} />
         ) : (
           <>
-            <ProgressStats
-              streak={stats?.streak || 0}
-              best={stats?.best || 0}
+            <HabitStreaks
+              habitStreaks={stats?.habitStreaks || {}}
               average={stats?.average || 0}
             />
 

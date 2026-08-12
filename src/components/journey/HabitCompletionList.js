@@ -43,6 +43,14 @@ const ICONS = {
       d="M13 10V3L4 14h7v7l9-11h-7z"
     />
   ),
+  travel: (
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={1.5}
+      d="M6 12L3 21l18-9L3 3l3 9zm0 0h7"
+    />
+  ),
 };
 
 export default function HabitCompletionList({ habitStats = {} }) {

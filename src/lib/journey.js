@@ -1,4 +1,6 @@
-export const HABIT_KEYS = ['meditate', 'walk', 'read', 'work', 'learn'];
+export const HABIT_KEYS = ['meditate', 'walk', 'read', 'work', 'learn', 'travel'];
+
+export const NOTE_HABITS = ['work', 'learn', 'travel'];
 
 export const HABIT_META = {
   meditate: { label: 'Meditate', color: '#a855f7' },
@@ -6,6 +8,7 @@ export const HABIT_META = {
   read: { label: 'Read', color: '#3b82f6' },
   work: { label: 'Work', color: '#f97316' },
   learn: { label: 'Learn', color: '#eab308' },
+  travel: { label: 'Travel', color: '#06b6d4' },
 };
 
 export const EMPTY_HABITS = {
@@ -14,9 +17,14 @@ export const EMPTY_HABITS = {
   read: { done: false },
   work: { done: false, notes: '' },
   learn: { done: false, notes: '' },
+  travel: { done: false, notes: '' },
 };
 
-export const STREAK_THRESHOLD = 5 / 7;
+/** Habits + wake + sleep */
+export const CHECKLIST_TOTAL = HABIT_KEYS.length + 2;
+
+/** Day counts as “complete” for overall metrics when this fraction is done */
+export const STREAK_THRESHOLD = 6 / CHECKLIST_TOTAL;
 /** Rolling/cycle window size for heatmap and similar UI */
 export const CYCLE_DAYS = 30;
 
@@ -92,7 +100,7 @@ export function dayChecklistCount(day) {
 }
 
 export function dayScore(day) {
-  return dayChecklistCount(day) / 7;
+  return dayChecklistCount(day) / CHECKLIST_TOTAL;
 }
 
 export function dayPercent(day) {
@@ -101,6 +109,10 @@ export function dayPercent(day) {
 
 export function isDayComplete(day) {
   return dayScore(day) >= STREAK_THRESHOLD;
+}
+
+export function isHabitDone(day, habitKey) {
+  return !!day?.habits?.[habitKey]?.done;
 }
 
 /**
@@ -140,6 +152,53 @@ export function computeBestStreak(dayMap, startDate, todayStr) {
     cursor = addDays(cursor, 1);
   }
   return best;
+}
+
+/** Current consecutive days a single habit was marked done */
+export function computeHabitStreak(dayMap, startDate, todayStr, habitKey) {
+  let cursor = todayStr;
+  if (cursor < startDate) return 0;
+
+  if (!isHabitDone(dayMap[cursor], habitKey)) {
+    cursor = addDays(cursor, -1);
+  }
+
+  let streak = 0;
+  while (cursor >= startDate) {
+    if (!isHabitDone(dayMap[cursor], habitKey)) break;
+    streak += 1;
+    cursor = addDays(cursor, -1);
+  }
+  return streak;
+}
+
+export function computeHabitBestStreak(dayMap, startDate, todayStr, habitKey) {
+  if (todayStr < startDate) return 0;
+  let best = 0;
+  let current = 0;
+  let cursor = startDate;
+  while (cursor <= todayStr) {
+    if (isHabitDone(dayMap[cursor], habitKey)) {
+      current += 1;
+      best = Math.max(best, current);
+    } else {
+      current = 0;
+    }
+    cursor = addDays(cursor, 1);
+  }
+  return best;
+}
+
+export function computeAllHabitStreaks(dayMap, startDate, todayStr) {
+  return Object.fromEntries(
+    HABIT_KEYS.map((key) => [
+      key,
+      {
+        current: computeHabitStreak(dayMap, startDate, todayStr, key),
+        best: computeHabitBestStreak(dayMap, startDate, todayStr, key),
+      },
+    ])
+  );
 }
 
 export function formatDisplayDate(dateStr) {
