@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import clientPromise from '@/lib/mongodb';
 import { verifyToken } from '@/lib/auth';
-import { EMPTY_HABITS, emptyDayDoc, HABIT_KEYS } from '@/lib/journey';
+import { EMPTY_HABITS, emptyDayDoc, HABIT_KEYS, NOTE_HABITS } from '@/lib/journey';
 
 function isValidDate(date) {
   return /^\d{4}-\d{2}-\d{2}$/.test(date);
@@ -78,11 +78,11 @@ export async function PATCH(request, { params }) {
         habits[key] = {
           ...habits[key],
           ...(typeof patch.done === 'boolean' ? { done: patch.done } : {}),
-          ...(key === 'work' || key === 'learn'
+          ...(NOTE_HABITS.includes(key)
             ? { notes: patch.notes !== undefined ? String(patch.notes) : habits[key].notes || '' }
             : {}),
         };
-        if (key === 'work' || key === 'learn') {
+        if (NOTE_HABITS.includes(key)) {
           habits[key].notes = habits[key].notes || '';
         }
       }

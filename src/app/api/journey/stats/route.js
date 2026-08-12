@@ -5,8 +5,7 @@ import {
   CYCLE_DAYS,
   HABIT_KEYS,
   addDays,
-  computeBestStreak,
-  computeStreak,
+  computeAllHabitStreaks,
   dayScore,
   formatDateLocal,
   journeyCycleInfo,
@@ -117,8 +116,11 @@ export async function GET(request) {
       })
     );
 
-    const streak = computeStreak(dayMap, journey.startDate, todayStr);
-    const best = computeBestStreak(dayMap, journey.startDate, todayStr);
+    const habitStreaks = computeAllHabitStreaks(
+      dayMap,
+      journey.startDate,
+      todayStr
+    );
     const average = Math.round(percentSum / denom);
 
     return NextResponse.json({
@@ -128,9 +130,8 @@ export async function GET(request) {
         status: journey.status,
       },
       stats: {
-        streak,
-        best,
         average,
+        habitStreaks,
         heatmap,
         cycle: cycleInfo
           ? {
