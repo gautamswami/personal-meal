@@ -1,4 +1,4 @@
-export const HABIT_KEYS = ['meditate', 'walk', 'read', 'work', 'learn', 'travel'];
+export const HABIT_KEYS = ['meditate', 'walk', 'read', 'work', 'learn', 'travel', 'gym'];
 
 export const NOTE_HABITS = ['work', 'learn', 'travel'];
 
@@ -9,6 +9,7 @@ export const HABIT_META = {
   work: { label: 'Work', color: '#f97316' },
   learn: { label: 'Learn', color: '#eab308' },
   travel: { label: 'Travel', color: '#06b6d4' },
+  gym: { label: 'Gym', color: '#a3e635' },
 };
 
 export const EMPTY_HABITS = {
@@ -18,6 +19,7 @@ export const EMPTY_HABITS = {
   work: { done: false, notes: '' },
   learn: { done: false, notes: '' },
   travel: { done: false, notes: '' },
+  gym: { done: false },
 };
 
 /** Habits + wake + sleep */
@@ -81,6 +83,7 @@ export function emptyDayDoc(userId, date) {
     habits: structuredClone
       ? structuredClone(EMPTY_HABITS)
       : JSON.parse(JSON.stringify(EMPTY_HABITS)),
+    gym: { exercises: {} },
     meals: [],
     wakeTime: null,
     sleepTime: null,

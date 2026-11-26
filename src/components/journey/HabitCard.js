@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+
 const ICONS = {
   meditate: (
     <path
@@ -49,6 +51,14 @@ const ICONS = {
       d="M6 12L3 21l18-9L3 3l3 9zm0 0h7"
     />
   ),
+  gym: (
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={1.5}
+      d="M6.5 6.5l11 11M4 10l3-3 3 3M14 14l3 3 3-3M9 7.5V4m6 16v-3.5M7.5 9H4m16 6h-3.5"
+    />
+  ),
 };
 
 export default function HabitCard({
@@ -60,15 +70,14 @@ export default function HabitCard({
   hasNotes,
   onNotes,
   wide,
+  href,
 }) {
-  return (
-    <button
-      type="button"
-      onClick={onToggle}
-      className={`journey-card relative flex flex-col items-center justify-center gap-2 py-4 px-2 transition-all active:scale-[0.98] ${
-        wide ? 'min-h-[88px]' : 'min-h-[96px]'
-      } ${done ? 'border-[#a3e635] ring-1 ring-[#a3e635]/40' : ''}`}
-    >
+  const className = `journey-card relative flex flex-col items-center justify-center gap-2 py-4 px-2 transition-all active:scale-[0.98] ${
+    wide ? 'min-h-[88px] w-full' : 'min-h-[96px]'
+  } ${done ? 'border-[#a3e635] ring-1 ring-[#a3e635]/40' : ''}`;
+
+  const inner = (
+    <>
       {showNotes && (
         <span
           role="button"
@@ -116,6 +125,20 @@ export default function HabitCard({
       <span className={`text-sm font-medium ${done ? 'text-[#a3e635]' : 'text-[#aeaeb2]'}`}>
         {label}
       </span>
+    </>
+  );
+
+  if (href) {
+    return (
+      <Link href={href} className={className}>
+        {inner}
+      </Link>
+    );
+  }
+
+  return (
+    <button type="button" onClick={onToggle} className={className}>
+      {inner}
     </button>
   );
 }

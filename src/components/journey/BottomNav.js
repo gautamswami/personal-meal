@@ -6,11 +6,12 @@ import { usePathname } from 'next/navigation';
 export default function BottomNav() {
   const pathname = usePathname();
   const todayActive = pathname === '/';
+  const gymActive = pathname === '/gym';
   const progressActive = pathname === '/progress';
 
   return (
     <nav className="fixed bottom-0 inset-x-0 z-40 border-t border-[#2c2c2e] bg-black/95 backdrop-blur">
-      <div className="max-w-md mx-auto grid grid-cols-2 h-14 relative">
+      <div className="max-w-md mx-auto grid grid-cols-3 h-14 relative">
         <Link
           href="/"
           className={`relative flex flex-col items-center justify-center gap-0.5 text-xs font-medium ${
@@ -27,6 +28,23 @@ export default function BottomNav() {
             />
           </svg>
           Today
+        </Link>
+        <Link
+          href="/gym"
+          className={`relative flex flex-col items-center justify-center gap-0.5 text-xs font-medium ${
+            gymActive ? 'text-[#a3e635]' : 'text-[#8e8e93]'
+          }`}
+        >
+          {gymActive && <span className="absolute top-0 inset-x-0 h-0.5 bg-[#a3e635]" />}
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4 8h3l2-3h6l2 3h3v10a1 1 0 01-1 1H5a1 1 0 01-1-1V8zm4 4a4 4 0 108 0"
+            />
+          </svg>
+          Gym
         </Link>
         <Link
           href="/progress"

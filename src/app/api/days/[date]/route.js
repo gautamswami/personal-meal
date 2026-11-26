@@ -40,6 +40,7 @@ export async function GET(_request, { params }) {
       day: {
         date: day.date,
         habits: day.habits || EMPTY_HABITS,
+        gym: day.gym || { exercises: {} },
         meals: day.meals || [],
         wakeTime: day.wakeTime ?? null,
         sleepTime: day.sleepTime ?? null,
@@ -88,10 +89,27 @@ export async function PATCH(request, { params }) {
       }
     }
 
+    const baseGym = base.gym || { exercises: {} };
+    let gym = {
+      exercises: { ...(baseGym.exercises || {}) },
+    };
+    if (body.gym && typeof body.gym === 'object') {
+      if (body.gym.exercises && typeof body.gym.exercises === 'object') {
+        gym = {
+          exercises: { ...gym.exercises, ...body.gym.exercises },
+        };
+        // Normalize to booleans only
+        for (const [k, v] of Object.entries(gym.exercises)) {
+          gym.exercises[k] = !!v;
+        }
+      }
+    }
+
     const update = {
       userId,
       date,
       habits,
+      gym,
       meals: base.meals || [],
       wakeTime:
         body.wakeTime !== undefined
@@ -122,6 +140,7 @@ export async function PATCH(request, { params }) {
       day: {
         date: update.date,
         habits: update.habits,
+        gym: update.gym,
         meals: update.meals,
         wakeTime: update.wakeTime,
         sleepTime: update.sleepTime,

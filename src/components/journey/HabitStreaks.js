@@ -51,6 +51,14 @@ const ICONS = {
       d="M6 12L3 21l18-9L3 3l3 9zm0 0h7"
     />
   ),
+  gym: (
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={1.5}
+      d="M6.5 6.5l11 11M4 10l3-3 3 3M14 14l3 3 3-3M9 7.5V4m6 16v-3.5M7.5 9H4m16 6h-3.5"
+    />
+  ),
 };
 
 /** Compact per-habit current + best streaks */
@@ -93,7 +101,7 @@ export default function HabitStreaks({ habitStreaks = {}, average = 0 }) {
           <h2 className="text-sm font-semibold text-white">Habit streaks</h2>
         </div>
 
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-4 gap-2">
           {HABIT_KEYS.map((key) => {
             const meta = HABIT_META[key];
             const streak = habitStreaks[key] || { current: 0, best: 0 };

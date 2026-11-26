@@ -45,6 +45,7 @@ function emptyDay(date) {
   return {
     date,
     habits: { ...EMPTY_HABITS },
+    gym: { exercises: {} },
     meals: [],
     wakeTime: null,
     sleepTime: null,
@@ -55,6 +56,7 @@ function normalizeDay(data, fallbackDate) {
   return {
     date: data?.date || fallbackDate,
     habits: { ...EMPTY_HABITS, ...(data?.habits || {}) },
+    gym: { exercises: { ...(data?.gym?.exercises || {}) } },
     meals: data?.meals || [],
     wakeTime: data?.wakeTime ?? null,
     sleepTime: data?.sleepTime ?? null,
@@ -388,6 +390,14 @@ export default function TodayPage() {
                 />
               ))}
             </div>
+
+            <HabitCard
+              habitKey="gym"
+              label="Gym"
+              done={!!day?.habits?.gym?.done}
+              href="/gym"
+              wide
+            />
 
             <FoodIntakeCard
               meals={day?.meals || []}

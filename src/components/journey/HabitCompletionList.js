@@ -51,6 +51,14 @@ const ICONS = {
       d="M6 12L3 21l18-9L3 3l3 9zm0 0h7"
     />
   ),
+  gym: (
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={1.5}
+      d="M6.5 6.5l11 11M4 10l3-3 3 3M14 14l3 3 3-3M9 7.5V4m6 16v-3.5M7.5 9H4m16 6h-3.5"
+    />
+  ),
 };
 
 export default function HabitCompletionList({ habitStats = {} }) {
